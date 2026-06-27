@@ -1,0 +1,9 @@
+node_modules/
+venv/
+qwenenv/
+__pycache__/
+.next/
+dist/
+build/
+*.zip
+.env

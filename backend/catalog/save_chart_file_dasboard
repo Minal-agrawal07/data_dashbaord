@@ -1,0 +1,63 @@
+import os
+import matplotlib.pyplot as plt
+
+
+def save_chart_image(
+    chart_config,
+    filename="chart.png",
+    base_folder="output/"
+):
+    print("TYPE:", type(chart_config))
+    print("CONFIG:", chart_config)
+    os.makedirs(base_folder, exist_ok=True)
+
+    chart_type = (
+    chart_config.get("type")
+    or chart_config.get("series", [{}])[0].get("type", "bar")
+)
+
+    title = chart_config.get("title", {})
+    if isinstance(title, dict):
+        title = title.get("text", "Chart")
+    else:
+        title = str(title)
+
+
+        
+    if chart_type in ["bar", "line"]:
+
+        labels = chart_config["xAxis"]["data"]
+        values = chart_config["series"][0]["data"]
+
+        plt.figure(figsize=(8, 5))
+
+        if chart_type == "bar":
+            plt.bar(labels, values)
+        else:
+            plt.plot(labels, values, marker="o")
+
+        plt.title(title)
+        plt.xlabel(chart_config["xAxis"].get("name", ""))
+        plt.ylabel(chart_config["yAxis"].get("name", ""))
+
+    elif chart_type == "pie":
+
+        labels = [x["name"] for x in chart_config["series"][0]["data"]]
+        values = [x["value"] for x in chart_config["series"][0]["data"]]
+
+        plt.figure(figsize=(6, 6))
+        plt.pie(values, labels=labels, autopct="%1.1f%%")
+        plt.title(title)
+
+    else:
+        print(f"Chart type '{chart_type}' not supported for saving.")
+        return
+
+    output_file = os.path.join(base_folder, filename)
+    plt.tight_layout()
+    plt.savefig(output_file)
+    plt.close()
+
+    print(f"Chart saved as {output_file}")
+
+    return output_file

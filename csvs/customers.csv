@@ -1,0 +1,21 @@
+customer_id,customer_name,email,city,country,region,signup_date,plan,monthly_spend,is_active
+C001,Alice Chen,alice@example.com,New York,USA,North,2022-03-15,Pro,199.00,true
+C002,Bob Smith,bob@example.com,Atlanta,USA,South,2022-05-20,Starter,49.00,true
+C003,Carol Davis,carol@example.com,Boston,USA,East,2021-11-10,Enterprise,999.00,true
+C004,Dan Lee,dan@example.com,Seattle,USA,West,2023-01-08,Pro,199.00,true
+C005,Eva Brown,eva@example.com,Chicago,USA,North,2022-08-30,Starter,49.00,false
+C006,Frank Wilson,frank@example.com,Miami,USA,South,2021-06-14,Enterprise,999.00,true
+C007,Grace Kim,grace@example.com,Philadelphia,USA,East,2023-04-22,Pro,199.00,true
+C008,Henry Park,henry@example.com,Los Angeles,USA,West,2022-12-01,Starter,49.00,true
+C009,Iris Taylor,iris@example.com,Minneapolis,USA,North,2021-09-19,Pro,199.00,true
+C010,Jack Anderson,jack@example.com,Houston,USA,South,2023-07-05,Starter,49.00,true
+C011,Kate Martin,kate@example.com,Washington DC,USA,East,2022-02-28,Enterprise,999.00,false
+C012,Liam Jackson,liam@example.com,Portland,USA,West,2021-12-15,Pro,199.00,true
+C013,Mia White,mia@example.com,Detroit,USA,North,2023-09-11,Starter,49.00,true
+C014,Noah Harris,noah@example.com,Nashville,USA,South,2022-04-07,Pro,199.00,true
+C015,Olivia Clark,olivia@example.com,Charlotte,USA,East,2021-08-23,Enterprise,999.00,true
+C016,Peter Lewis,peter@example.com,Denver,USA,West,2023-02-14,Starter,49.00,false
+C017,Quinn Robinson,quinn@example.com,Milwaukee,USA,North,2022-10-19,Pro,199.00,true
+C018,Rachel Walker,rachel@example.com,New Orleans,USA,South,2021-07-30,Enterprise,999.00,true
+C019,Sam Hall,sam@example.com,Baltimore,USA,East,2023-05-16,Starter,49.00,true
+C020,Tina Young,tina@example.com,Phoenix,USA,West,2022-01-25,Pro,199.00,true
