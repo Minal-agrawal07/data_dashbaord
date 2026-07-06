@@ -12,26 +12,72 @@ async function req<T>(method: string, path: string, body?: unknown): Promise<T> 
   }
   return res.json();
 }
-
 export const api = {
   getSchema: () => req<{ files: SchemaFile[] }>("GET", "/api/schema"),
-  refreshSchema: () => req<{ files: SchemaFile[] }>("POST", "/api/schema/refresh"),
-  generateChart: (body: GenerateRequest) => req<GenerateResponse>("POST", "/api/charts/generate", body),
-  refineChart: (chartId: number, body: RefineRequest) => req<GenerateResponse>("POST", `/api/charts/${chartId}/refine`, body),
-  runSQL: (sql: string, nlQuery?: string) => req<GenerateResponse>("POST", "/api/charts/run-sql", { sql, nl_query: nlQuery }),
-  getCharts: (dashboardId?: number) => req<{ charts: Chart[] }>("GET", `/api/charts${dashboardId ? `?dashboard_id=${dashboardId}` : ""}`),
-  getDashboards: () => req<{ dashboards: Dashboard[] }>("GET", "/api/dashboards"),
-  createDashboard: (name: string) => req<Dashboard>("POST", "/api/dashboards", { name }),
+
+  refreshSchema: () =>
+    req<{ files: SchemaFile[] }>("POST", "/api/schema/refresh"),
+
+  uploadCSV: async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch(`${BASE}/api/upload`, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: "Upload failed" }));
+      throw new Error(err.detail || "Upload failed");
+    }
+
+    return res.json();
+  },
+
+  generateChart: (body: GenerateRequest) =>
+    req<GenerateResponse>("POST", "/api/charts/generate", body),
+
+  refineChart: (chartId: number, body: RefineRequest) =>
+    req<GenerateResponse>("POST", `/api/charts/${chartId}/refine`, body),
+
+  runSQL: (sql: string, nlQuery?: string) =>
+    req<GenerateResponse>("POST", "/api/charts/run-sql", {
+      sql,
+      nl_query: nlQuery,
+    }),
+
+  getCharts: (dashboardId?: number) =>
+    req<{ charts: Chart[] }>(
+      "GET",
+      `/api/charts${dashboardId ? `?dashboard_id=${dashboardId}` : ""}`
+    ),
+
+  getDashboards: () =>
+    req<{ dashboards: Dashboard[] }>("GET", "/api/dashboards"),
+
+  createDashboard: (name: string) =>
+    req<Dashboard>("POST", "/api/dashboards", { name }),
+
   updateLayout: (dashboardId: number, layout_config: LayoutItem[]) =>
     req("PUT", `/api/dashboards/${dashboardId}/layout`, { layout_config }),
-  health: () => req<{ status: string; csv_files: number; model_path_set: boolean }>("GET", "/api/health"),
-};
 
+  health: () =>
+    req<{ status: string; csv_files: number; model_path_set: boolean }>(
+      "GET",
+      "/api/health"
+    ),
+};
 export interface SchemaFile {
   id: number;
   filename: string;
   row_count: number;
-  columns: { column_name: string; data_type: string; sample_values: string[]; description?: string }[];
+  columns: {
+    column_name: string;
+    data_type: string;
+    sample_values: string[];
+    description?: string;
+  }[];
 }
 
 export interface GenerateRequest {

@@ -91,7 +91,7 @@ def resolve_schema(intent: dict) -> dict:
 
     resolved_metrics = []
 
-    for term in intent.get("metrics", []):
+    for term in (intent.get("metrics") or []):
         match = match_term(term, columns, aliases)
 
         if match:
@@ -121,7 +121,7 @@ def resolve_schema(intent: dict) -> dict:
 
     resolved_dims = []
 
-    for term in intent.get("dimensions", []):
+    for term in (intent.get("dimensions") or []):
 
         match = match_term(
             term,

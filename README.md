@@ -150,3 +150,10 @@ data_dashboard/
 
 python -m pipeline.dashboard_planner: to run dashboard file to create most imp que from csv 
 nd can ignore these files : dashboard generator nd dashboar executor nd savechartfiledashbaord : as these r incompelte to run through concurrency 
+
+
+
+for my pc:frntend nd backend r env do activate it for results 
+
+
+intense parser.py m 1024 token s 256 

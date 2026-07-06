@@ -62,7 +62,8 @@ export default function BuilderPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await api.runSQL(sql, current?.response.intent as string || "");
+      const intent = current?.response.intent;
+      const res = await api.runSQL(sql, typeof intent === "string" ? intent : "");
       if (current) {
         setCurrent({ ...current, response: { ...current.response, ...res } });
       }

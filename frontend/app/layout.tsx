@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import "./globals.css";
 import Link from "next/link";
+// @ts-ignore: side-effect import for global CSS without type declarations
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "AI Dashboard Builder",

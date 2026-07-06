@@ -1,11 +1,12 @@
 import os
 import json
+import shutil
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -16,7 +17,7 @@ from catalog.db import (
     save_dashboard, get_dashboards, update_dashboard_layout, get_aliases, save_alias
 )
 from catalog.save_chart_file import save_chart_image
-from catalog.crawler import crawl_all
+from catalog.crawler import crawl_all, crawl_file
 from catalog.watcher import start_watcher, stop_watcher
 from pipeline.intent_parser import parse_intent
 from pipeline.schema_matcher import resolve_schema
@@ -91,6 +92,42 @@ def get_schema():
 def refresh_schema():
     crawl_all()
     return {"status": "ok", "files": get_all_schema()}
+
+@app.post("/api/upload")
+async def upload_csv(file: UploadFile = File(...)):
+    if not file.filename.lower().endswith(".csv"):
+        raise HTTPException(status_code=400, detail="Only CSV files are allowed")
+
+    # Save inside backend/../csvs
+    csv_folder = Path(__file__).parent.parent / "csvs"
+    csv_folder.mkdir(parents=True, exist_ok=True)
+
+    file_path = csv_folder / file.filename
+
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    # Crawl only this file
+    info = crawl_file(str(file_path))
+
+    from catalog.db import upsert_csv_file, replace_columns
+
+    file_id = upsert_csv_file(
+        info["filename"],
+        info["filepath"],
+        info["row_count"],
+        info["last_modified"],
+    )
+
+    replace_columns(file_id, info["columns"])
+
+    return {
+        "status": "success",
+        "filename": info["filename"],
+        "rows": info["row_count"],
+        "columns": len(info["columns"]),
+    }
+
 
 
 @app.get("/api/aliases")
