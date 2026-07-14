@@ -56,7 +56,7 @@ def load_model() -> Llama:
 def generate(
     user_prompt: str,
     system_prompt: str = "",
-    max_tokens: int = 1024,
+    max_tokens: int = 500,
     temperature: float = 0.1,
 ) -> str:
     """

@@ -39,6 +39,14 @@ Rules:
 - If no time range is mentioned, set time_range to null.
 - If no aggregation is clear, infer from context (count for "how many", sum for "total", avg for "average").
 - For "top N" requests, set limit to N.
+
+- If the request compares categories such as "active vs inactive",
+  "true vs false", "yes vs no", or any status comparison,
+  include the corresponding status/boolean column as a dimension.
+
+- For boolean columns (e.g. is_active, active, status),
+  include that column in "dimensions" whenever the user is asking
+  for a comparison between its values.
 """
 
 import time

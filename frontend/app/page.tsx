@@ -14,35 +14,53 @@ import { api } from "@/lib/api";
 
 export default function HomePage() {
   const [showUpload, setShowUpload] = useState(false);
- 
+  const [showAccessModal, setShowAccessModal] = useState(false);
+  const [accessKey, setAccessKey] = useState("");
+  const [verifying, setVerifying] = useState(false);
+  const [keyError, setKeyError] = useState("");
+  const [isAuthorized, setIsAuthorized] = useState(false);
   const router = useRouter();
 
   const [dragging, setDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+const MAX_FILE_SIZE = 100 * 1024 // 100kb
 
-  const handleFile = async (file: File) => {
-    try {
-      setUploading(true);
+const handleFile = async (file: File) => {
+  // Check file extension
+  if (!file.name.toLowerCase().endsWith(".csv")) {
+    alert("Only CSV files are allowed.");
+    return;
+  }
 
-      await api.uploadCSV(file);
+  // Check file size
+ if (!isAuthorized && file.size > MAX_FILE_SIZE) {
+    setShowUpload(false);
+    setShowAccessModal(true);
+    return;
+}
 
-      alert(`${file.name} uploaded successfully!`);
+  try {
+    setUploading(true);
 
-      router.push("/setup");
-    } catch (err) {
-      console.error(err);
+    await api.uploadCSV(file,accessKey);
 
-      alert(
-        err instanceof Error
-          ? err.message
-          : "Failed to upload CSV."
-      );
-    } finally {
-      setUploading(false);
-    }
-  };
+    alert(`${file.name} uploaded successfully!`);
+
+    router.push("/setup");
+  } catch (err) {
+    console.error(err);
+
+    alert(
+      err instanceof Error
+        ? err.message
+        : "Failed to upload CSV."
+    );
+  } finally {
+    setUploading(false);
+  }
+};
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -54,6 +72,40 @@ export default function HomePage() {
       handleFile(file);
     }
   };
+  const verifyAccessKey = async () => {
+  if (!accessKey.trim()) {
+    setKeyError("Please enter an access key.");
+    return;
+  }
+
+  try {
+    setVerifying(true);
+    setKeyError("");
+
+    const res = await api.verifyAccessKey(accessKey);
+
+   if (res.valid) {
+    setIsAuthorized(true);
+    setShowAccessModal(false);
+
+    // Reopen upload dialog
+    setShowUpload(true);
+
+    // Open the file picker
+    setTimeout(() => {
+        fileInputRef.current?.click();
+    }, 100);
+}else {
+      setKeyError("Invalid access key.");
+    }
+  } catch (err) {
+    setKeyError(
+      err instanceof Error ? err.message : "Verification failed."
+    );
+  } finally {
+    setVerifying(false);
+  }
+};
 
   const handleBrowse = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -178,23 +230,11 @@ export default function HomePage() {
           </p>
         </div>
 
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-          <Wand2
-            size={24}
-            className="text-emerald-400 mb-4"
-          />
 
-          <h3 className="text-white font-semibold text-lg">
-            Ask in English
-          </h3>
-
-          <p className="text-gray-400 text-sm mt-2">
-            Type queries like "Show monthly sales by
-            category".
-          </p>
-        </div>
-
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+        <div
+  onClick={() => router.push("/dashboard-builder")}
+  className="bg-gray-900 border border-gray-800 rounded-xl p-6 cursor-pointer hover:border-indigo-500 transition"
+>
           <BarChart2
             size={24}
             className="text-amber-400 mb-4"
@@ -232,7 +272,8 @@ export default function HomePage() {
             </h2>
 
             <p className="text-center text-gray-400 mt-3">
-              Drag & Drop your CSV here
+              Drag & Drop your CSV here.
+              File should be less than 100kb. If it's larger, please enter your access key.
             </p>
 
             <div
@@ -249,9 +290,7 @@ export default function HomePage() {
               }`}
             >
 
-              <p className="text-gray-400 mb-6">
-                or
-              </p>
+              
 
               <button
                 onClick={() => fileInputRef.current?.click()}
@@ -274,6 +313,62 @@ export default function HomePage() {
 
         </div>
       )}
+      {showAccessModal && (
+  <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+
+    <div className="bg-gray-900 rounded-2xl p-8 w-[500px] relative border border-gray-700">
+
+      <button
+        onClick={() => setShowAccessModal(false)}
+        className="absolute top-4 right-4 text-gray-400 hover:text-white"
+      >
+        ✕
+      </button>
+
+    
+
+      <p className="text-gray-400 text-center mt-3">
+        Enter your access key to continue.
+      </p>
+
+      <input
+        type="password"
+        placeholder="Enter Access Key"
+        value={accessKey}
+        onChange={(e) => setAccessKey(e.target.value)}
+        className="w-full mt-6 bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white"
+      />
+
+      {keyError && (
+        <p className="text-red-400 mt-3 text-sm">
+          {keyError}
+        </p>
+      )}
+
+      <button
+  onClick={verifyAccessKey}
+  disabled={verifying}
+  className="w-full mt-6 bg-indigo-600 hover:bg-indigo-500 rounded-lg py-3 text-white disabled:opacity-50"
+>
+  {verifying ? "Verifying..." : "Verify Access"}
+</button>
+
+      <div className="border-t border-gray-700 mt-8 pt-5 text-center">
+
+        <p className="text-gray-400">
+          Don't have an access key?
+        </p>
+
+        <button className="mt-2 text-indigo-400 hover:text-indigo-300">
+          Request Access
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+)}
     </div>
   );
 }

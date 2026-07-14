@@ -1,7 +1,7 @@
 "use client";
-import { useState } from "react";
-import { ChevronDown, ChevronUp, Copy, Check, Play } from "lucide-react";
 
+import { ChevronDown, ChevronUp, Copy, Check, Play } from "lucide-react";
+import { useState, useEffect } from "react";
 interface Props {
   sql: string;
   onRunSQL?: (sql: string) => void;
@@ -10,7 +10,13 @@ interface Props {
 export default function SQLPanel({ sql, onRunSQL }: Props) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  
+
   const [editedSQL, setEditedSQL] = useState(sql);
+
+useEffect(() => {
+  setEditedSQL(sql);
+}, [sql]);
 
   const copy = async () => {
     await navigator.clipboard.writeText(editedSQL);

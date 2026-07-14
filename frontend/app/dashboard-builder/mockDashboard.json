@@ -1,0 +1,285 @@
+  [{
+    "title": "Loan Amount by Property Area",
+    "description": "Compares the average loan amount across different property areas.",
+    "sql": "SELECT \"Property_Area\", AVG(\"LoanAmount\") AS avg_loan_amount FROM read_csv_auto('C:\\Users\\agraw\\OneDrive\\Desktop\\projectsss\\data_dashboard_deepseek\\data_dashboard_gemma\\data_dashboard_gemma_final\\data_dashboard\\csvs\\loan.csv') GROUP BY \"Property_Area\" LIMIT 50000;",
+    "chart_type": "bar",
+    "chart_config": {
+      "title": {
+        "text": "Loanamount"
+      },
+      "tooltip": {
+        "trigger": "axis"
+      },
+      "legend": {},
+      "xAxis": {
+        "type": "category",
+        "data": [
+          "Semiurban",
+          "Urban",
+          "Rural"
+        ]
+      },
+      "yAxis": {
+        "type": "value"
+      },
+      "series": [
+        {
+          "type": "bar",
+          "name": "Avg Loan Amount",
+          "data": [
+            145.50438596491227,
+            142.19895287958116,
+            152.2601156069364
+          ]
+        }
+      ]
+    },
+    "data": [
+      {
+        "Property_Area": "Semiurban",
+        "avg_loan_amount": 145.50438596491227
+      },
+      {
+        "Property_Area": "Urban",
+        "avg_loan_amount": 142.19895287958116
+      },
+      {
+        "Property_Area": "Rural",
+        "avg_loan_amount": 152.2601156069364
+      }
+    ],
+    "row_count": 3
+  },
+
+  
+  {
+    "title": "Loan Status by Marital Status",
+    "description": "Compares loan approval rates between married and unmarried applicants.",
+    "sql": "SELECT \"Married\", COUNT(\"Loan_Status\") AS loan_status_count FROM read_csv_auto('C:\\Users\\agraw\\OneDrive\\Desktop\\projectsss\\data_dashboard_deepseek\\data_dashboard_gemma\\data_dashboard_gemma_final\\data_dashboard\\csvs\\loan.csv') GROUP BY \"Married\" LIMIT 50000;",
+    "chart_type": "table",
+    "chart_config": {
+      "type": "table",
+      "columns": [
+        "Married",
+        "loan_status_count"
+      ],
+      "rows": [
+        {
+          "Married": false,
+          "loan_status_count": 213
+        },
+        {
+          "Married": true,
+          "loan_status_count": 398
+        },
+        {
+          "Married": null,
+          "loan_status_count": 3
+        }
+      ]
+    },
+    "data": [
+      {
+        "Married": false,
+        "loan_status_count": 213
+      },
+      {
+        "Married": true,
+        "loan_status_count": 398
+      },
+      {
+        "Married": null,
+        "loan_status_count": 3
+      }
+    ],
+    "row_count": 3
+  },
+    {
+    "title": "Loan Amount by Property Area",
+    "description": "Compares the average loan amount across different property areas.",
+    "sql": "SELECT \"Property_Area\", AVG(\"LoanAmount\") AS avg_loan_amount FROM read_csv_auto('C:\\Users\\agraw\\OneDrive\\Desktop\\projectsss\\data_dashboard_deepseek\\data_dashboard_gemma\\data_dashboard_gemma_final\\data_dashboard\\csvs\\loan.csv') GROUP BY \"Property_Area\" LIMIT 50000;",
+    "chart_type": "bar",
+    "chart_config": {
+      "title": {
+        "text": "Loanamount"
+      },
+      "tooltip": {
+        "trigger": "axis"
+      },
+      "legend": {},
+      "xAxis": {
+        "type": "category",
+        "data": [
+          "Semiurban",
+          "Urban",
+          "Rural"
+        ]
+      },
+      "yAxis": {
+        "type": "value"
+      },
+      "series": [
+        {
+          "type": "bar",
+          "name": "Avg Loan Amount",
+          "data": [
+            145.50438596491227,
+            142.19895287958116,
+            152.2601156069364
+          ]
+        }
+      ]
+    },
+    "data": [
+      {
+        "Property_Area": "Semiurban",
+        "avg_loan_amount": 145.50438596491227
+      },
+      {
+        "Property_Area": "Urban",
+        "avg_loan_amount": 142.19895287958116
+      },
+      {
+        "Property_Area": "Rural",
+        "avg_loan_amount": 152.2601156069364
+      }
+    ],
+    "row_count": 3
+  },
+  {
+    "title": "Loan Status by Marital Status",
+    "description": "Compares loan approval rates between married and unmarried applicants.",
+    "sql": "SELECT \"Married\", COUNT(\"Loan_Status\") AS loan_status_count FROM read_csv_auto('C:\\Users\\agraw\\OneDrive\\Desktop\\projectsss\\data_dashboard_deepseek\\data_dashboard_gemma\\data_dashboard_gemma_final\\data_dashboard\\csvs\\loan.csv') GROUP BY \"Married\" LIMIT 50000;",
+    "chart_type": "table",
+    "chart_config": {
+      "type": "table",
+      "columns": [
+        "Married",
+        "loan_status_count"
+      ],
+      "rows": [
+        {
+          "Married": false,
+          "loan_status_count": 213
+        },
+        {
+          "Married": true,
+          "loan_status_count": 398
+        },
+        {
+          "Married": null,
+          "loan_status_count": 3
+        }
+      ]
+    },
+    "data": [
+      {
+        "Married": false,
+        "loan_status_count": 213
+      },
+      {
+        "Married": true,
+        "loan_status_count": 398
+      },
+      {
+        "Married": null,
+        "loan_status_count": 3
+      }
+    ],
+    "row_count": 3
+  },
+    {
+    "title": "Loan Amount by Property Area",
+    "description": "Compares the average loan amount across different property areas.",
+    "sql": "SELECT \"Property_Area\", AVG(\"LoanAmount\") AS avg_loan_amount FROM read_csv_auto('C:\\Users\\agraw\\OneDrive\\Desktop\\projectsss\\data_dashboard_deepseek\\data_dashboard_gemma\\data_dashboard_gemma_final\\data_dashboard\\csvs\\loan.csv') GROUP BY \"Property_Area\" LIMIT 50000;",
+    "chart_type": "bar",
+    "chart_config": {
+      "title": {
+        "text": "Loanamount"
+      },
+      "tooltip": {
+        "trigger": "axis"
+      },
+      "legend": {},
+      "xAxis": {
+        "type": "category",
+        "data": [
+          "Semiurban",
+          "Urban",
+          "Rural"
+        ]
+      },
+      "yAxis": {
+        "type": "value"
+      },
+      "series": [
+        {
+          "type": "bar",
+          "name": "Avg Loan Amount",
+          "data": [
+            145.50438596491227,
+            142.19895287958116,
+            152.2601156069364
+          ]
+        }
+      ]
+    },
+    "data": [
+      {
+        "Property_Area": "Semiurban",
+        "avg_loan_amount": 145.50438596491227
+      },
+      {
+        "Property_Area": "Urban",
+        "avg_loan_amount": 142.19895287958116
+      },
+      {
+        "Property_Area": "Rural",
+        "avg_loan_amount": 152.2601156069364
+      }
+    ],
+    "row_count": 3
+  },
+  {
+    "title": "Loan Status by Marital Status",
+    "description": "Compares loan approval rates between married and unmarried applicants.",
+    "sql": "SELECT \"Married\", COUNT(\"Loan_Status\") AS loan_status_count FROM read_csv_auto('C:\\Users\\agraw\\OneDrive\\Desktop\\projectsss\\data_dashboard_deepseek\\data_dashboard_gemma\\data_dashboard_gemma_final\\data_dashboard\\csvs\\loan.csv') GROUP BY \"Married\" LIMIT 50000;",
+    "chart_type": "table",
+    "chart_config": {
+      "type": "table",
+      "columns": [
+        "Married",
+        "loan_status_count"
+      ],
+      "rows": [
+        {
+          "Married": false,
+          "loan_status_count": 213
+        },
+        {
+          "Married": true,
+          "loan_status_count": 398
+        },
+        {
+          "Married": null,
+          "loan_status_count": 3
+        }
+      ]
+    },
+    "data": [
+      {
+        "Married": false,
+        "loan_status_count": 213
+      },
+      {
+        "Married": true,
+        "loan_status_count": 398
+      },
+      {
+        "Married": null,
+        "loan_status_count": 3
+      }
+    ],
+    "row_count": 3
+  }
+]

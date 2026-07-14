@@ -18,10 +18,20 @@ export const api = {
   refreshSchema: () =>
     req<{ files: SchemaFile[] }>("POST", "/api/schema/refresh"),
 
-  uploadCSV: async (file: File) => {
+
+
+
+  verifyAccessKey: (key: string) =>
+  req<{ valid: boolean }>("POST", "/api/verify-key", {
+    key,
+  }),  
+
+  
+  uploadCSV: async (file: File, accessKey: string = "") => {
     const formData = new FormData();
     formData.append("file", file);
-
+    formData.append("access_key", accessKey);
+  
     const res = await fetch(`${BASE}/api/upload`, {
       method: "POST",
       body: formData,
@@ -35,6 +45,15 @@ export const api = {
     return res.json();
   },
 
+
+
+  generateDashboard: (filename: string) =>
+  req<{ cards: any[] }>("POST", "/api/dashboard/generate", {
+    filename,
+  }),
+
+
+  
   generateChart: (body: GenerateRequest) =>
     req<GenerateResponse>("POST", "/api/charts/generate", body),
 

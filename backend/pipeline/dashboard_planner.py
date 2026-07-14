@@ -76,17 +76,21 @@ Dataset Schema
 Generate the executive dashboard plan.
 """
 
-    print("=" * 80)
-    print("SCHEMA SENT TO GEMMA")
-    print(schema_text)
-    print("=" * 80)
+    # print("=" * 80)
+    # print("SCHEMA SENT TO GEMMA")
+    # print(schema_text)
+    # print("=" * 80)
 
     raw = generate(
     user_prompt=user_prompt,
     system_prompt=system_prompt,
-    max_tokens=900,
-    temperature=0.1,
+    # model="google/gemma-4-26b-a4b-it:free",
+    max_tokens=500,
+    temperature=0.2,
 )
+    print("Type:", type(raw))
+    print("Length:", len(raw) if raw else 0)
+    print("repr:", repr(raw))
 
     print("=" * 80)
     print("RAW DASHBOARD PLAN")

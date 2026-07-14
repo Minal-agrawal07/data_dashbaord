@@ -99,9 +99,14 @@ export default function ChartRenderer({ chartConfig, chartType, data }: Props) {
   return (
     <ReactECharts
       option={echartsOption}
-      style={{ height: "340px", width: "100%" }}
+      style={{
+    width:"100%",
+    height:"300px"
+}}
       theme="dark"
       opts={{ renderer: "canvas" }}
+      notMerge
+      lazyUpdate
     />
   );
 }

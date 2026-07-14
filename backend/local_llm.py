@@ -16,7 +16,17 @@ from openai import OpenAI
 
 
 def remove_thinking(text: str) -> str:
-    return re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
+    # Remove thinking blocks
+    text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL)
+
+    # Remove Gemma tokenizer artifacts
+    text = re.sub(r"</?pad>", "", text)
+    text = re.sub(r"</?bos>", "", text)
+    text = re.sub(r"</?eos>", "", text)
+    text = re.sub(r"<start_of_turn>", "", text)
+    text = re.sub(r"<end_of_turn>", "", text)
+
+    return text.strip()
 
 
 # Create OpenRouter client
@@ -29,8 +39,9 @@ client = OpenAI(
 def generate(
     user_prompt: str,
     system_prompt: str = "",
-    max_tokens: int = 1024,
+    max_tokens: int = 500,
     temperature: float = 0.1,
+    model: str = "openai/gpt-oss-20b:free",
 ) -> str:
     """
     Run inference using an OpenRouter-hosted model.
@@ -57,11 +68,14 @@ def generate(
     print(messages)
 
     response = client.chat.completions.create(
-        model="openai/gpt-4o-mini",
-        messages=messages,
-        temperature=temperature,
-        max_tokens=max_tokens,
-    )
+    model=model,
+    messages=messages,
+    temperature=temperature,
+    max_tokens=max_tokens,
+)
+    print("\n========== FULL RESPONSE ==========")
+    print(response.model_dump_json(indent=2))
+    print("===================================\n")
 
     text = response.choices[0].message.content or ""
 
@@ -70,6 +84,8 @@ def generate(
     print(text)
     print("=" * 80)
 
-    text = remove_thinking(text)
+# Only clean Gemma outputs
+    if "gemma" in model.lower():
+     text = remove_thinking(text)
 
     return text

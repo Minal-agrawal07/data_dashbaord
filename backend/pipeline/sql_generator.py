@@ -16,16 +16,26 @@ IMPORTANT:
 - Never output markdown.
 - The first word MUST be SELECT.
 - The last character MUST be ;
-- If the user asks for monthly aggregation and the table has order_date, use order_date.
 - Never invent joins.
 - Never use columns from another CSV unless explicitly requested.
 
 Rules:
-1. Use read_csv_auto('/absolute/path/to/file.csv')
-2. Only SELECT queries.
-3. Quote column names.
-4. Use DATE_TRUNC('month', ...)
-5. LIMIT 50000 if not present.
+1. Only generate SELECT queries.
+2. Use ONLY tables and columns provided in the schema.
+3. Quote column names when necessary.
+4. Use DATE_TRUNC('month', ...) for monthly grouping.
+5. Add LIMIT 50000 if not present.
+
+Aggregation Rules:
+- Every non-aggregated column in SELECT MUST appear in GROUP BY.
+- ORDER BY can ONLY use:
+    * a column in GROUP BY
+    * an aggregate alias (SUM, COUNT, AVG, MAX, MIN)
+- NEVER ORDER BY a column that is not grouped or aggregated.
+- If a metric like SUM(conversions) is selected, prefer:
+      ORDER BY total_conversions DESC
+  instead of ordering by another column.
+- Never ORDER BY date after GROUP BY unless using MAX(date) or MIN(date).
 """
 
 def _clean_sql(raw: str) -> str:
@@ -69,12 +79,12 @@ def generate_sql(
     filepaths = resolved.get("filepaths", {})
 
     filepath_info = (
-        "File paths to use in SQL:\n"
-        + "\n".join(
-            f"  {fname}: read_csv_auto('{fpath}')"
-            for fname, fpath in filepaths.items()
-        )
+    "Available tables:\n"
+    + "\n".join(
+        f"  {fname.replace('.csv','')}"
+        for fname in filepaths.keys()
     )
+)
 
     prior_sql = "\n".join(
         f"Previous SQL:\n{turn['sql']}"
@@ -100,15 +110,19 @@ Dimensions:
 {history_section}
 
 Write the DuckDB SQL query.
+
+IMPORTANT:
+- Use the table names above.
+- NEVER use read_csv_auto().
 """
 
     system_prompt = SQL_SYSTEM + "\n\n" + schema_context
 
-
+    print(schema_context)
     raw = generate(
     user_prompt=user_prompt,
     system_prompt=system_prompt,
-    max_tokens=1024,
+    max_tokens=500,
 )
 
     sql = _clean_sql(raw)
@@ -164,7 +178,7 @@ Return ONLY the corrected SQL query.
     raw = generate(
         user_prompt=user_prompt,
         system_prompt=system_prompt,
-        max_tokens=1024,
+        max_tokens=500,
     )
 
     return _clean_sql(raw)

@@ -34,11 +34,46 @@ def execute_query(sql: str, timeout_seconds: int = 30) -> tuple[str, list[dict]]
         return validated_sql, cached["result_json"]
 
     conn = duckdb.connect()
+
     try:
-        conn.execute(f"SET threads TO 4")
+        conn.execute("SET threads TO 4")
+
+        folder = get_csv_folder()
+
+        for csv_file in folder.glob("*.csv"):
+         table_name = csv_file.stem
+
+         conn.execute(f"""
+            CREATE OR REPLACE VIEW {table_name} AS
+            SELECT *
+            FROM read_csv_auto('{csv_file.as_posix()}');
+        """)
+
         start = time.perf_counter()
 
-        df = conn.execute(validated_sql).df()
+        for csv_file in folder.glob("*.csv"):
+         table_name = csv_file.stem
+
+         create_view_sql = f"""
+    CREATE OR REPLACE VIEW "{table_name}" AS
+    SELECT *
+    FROM read_csv_auto('{csv_file.as_posix()}');
+    """
+
+         print("=" * 80)
+         print(create_view_sql)
+         print("=" * 80)
+
+         conn.execute(create_view_sql)
+
+        try:
+           df = conn.execute(validated_sql).df()
+        except Exception as e:
+          import traceback
+          traceback.print_exc()
+          print("SQL WAS:")
+          print(validated_sql)
+          raise
 
         end = time.perf_counter()
 

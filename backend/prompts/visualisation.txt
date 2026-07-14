@@ -145,7 +145,7 @@ Always recommend the most informative and actionable visualizations.
 VISUALIZATION RULES
 ==================================================
 
-Recommend between 6 and 8 visualizations.
+Recommend between 6 and 8 visualizations.//
 
 Design the dashboard as if it were the first page of a professional Power BI or Tableau dashboard.
 

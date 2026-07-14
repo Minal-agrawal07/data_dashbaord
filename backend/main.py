@@ -6,9 +6,10 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+
 
 load_dotenv()
 
@@ -26,7 +27,8 @@ from pipeline.chart_selector import select_chart_type
 from pipeline.chart_config import generate_chart_config
 from query.executor import execute_query
 from query.validator import QueryValidationError
-
+from pipeline.dashboard_planner import generate_dashboard_plan
+from pipeline.dashboard_executor import execute_dashboard
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -80,7 +82,8 @@ class AliasCreate(BaseModel):
     file_id: int
     column_name: str
 
-
+class GenerateDashboardRequest(BaseModel):
+    filename: str
 # ─── Schema ───────────────────────────────────────────────────────────────────
 
 @app.get("/api/schema")
@@ -94,9 +97,60 @@ def refresh_schema():
     return {"status": "ok", "files": get_all_schema()}
 
 @app.post("/api/upload")
-async def upload_csv(file: UploadFile = File(...)):
+async def upload_csv(
+    file: UploadFile = File(...),
+    access_key: str = Form("")
+):
     if not file.filename.lower().endswith(".csv"):
-        raise HTTPException(status_code=400, detail="Only CSV files are allowed")
+        raise HTTPException(
+            status_code=400,
+            detail="Only CSV files are allowed"
+        )
+
+    # Maximum file size = 10 MB
+    MAX_FILE_SIZE = 100 * 1024
+
+    contents = await file.read()
+
+    has_access = access_key == ACCESS_KEY
+
+    if not has_access and len(contents) > MAX_FILE_SIZE:
+     raise HTTPException(
+        status_code=400,
+        detail="CSV file size must not exceed 100 KB without a valid access key."
+    )
+
+    file.file.seek(0)
+
+    # Save inside backend/../csvs
+    csv_folder = Path(__file__).parent.parent / "csvs"
+    csv_folder.mkdir(parents=True, exist_ok=True)
+
+    file_path = csv_folder / file.filename
+
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    # Crawl only this file
+    info = crawl_file(str(file_path))
+
+    from catalog.db import upsert_csv_file, replace_columns
+
+    file_id = upsert_csv_file(
+        info["filename"],
+        info["filepath"],
+        info["row_count"],
+        info["last_modified"],
+    )
+
+    replace_columns(file_id, info["columns"])
+
+    return {
+        "status": "success",
+        "filename": info["filename"],
+        "rows": info["row_count"],
+        "columns": len(info["columns"]),
+    }
 
     # Save inside backend/../csvs
     csv_folder = Path(__file__).parent.parent / "csvs"
@@ -368,6 +422,86 @@ def update_layout(dashboard_id: int, body: LayoutUpdate):
     update_dashboard_layout(dashboard_id, body.layout_config)
     return {"status": "ok"}
 
+
+
+import math
+def clean_json(obj):
+    if isinstance(obj, float):
+        if math.isnan(obj) or math.isinf(obj):
+            return None
+        return obj
+
+    if isinstance(obj, dict):
+        return {
+            k: clean_json(v)
+            for k, v in obj.items()
+        }
+
+    if isinstance(obj, list):
+        return [
+            clean_json(x)
+            for x in obj
+        ]
+
+    return obj
+
+
+
+ACCESS_KEY = "hie123"
+
+class VerifyRequest(BaseModel):
+    key: str
+
+@app.post("/api/verify-key")
+def verify_key(req: VerifyRequest):
+    return {"valid": req.key == ACCESS_KEY}
+@app.post("/api/dashboard/generate")
+def generate_dashboard(body: GenerateDashboardRequest):
+
+    csv_path = (
+        Path(__file__).parent.parent
+        / "csvs"
+        / body.filename
+    )
+
+    if not csv_path.exists():
+        raise HTTPException(
+            status_code=404,
+            detail="CSV not found."
+        )
+
+    planner_start = time.perf_counter()
+
+    plan = generate_dashboard_plan(str(csv_path))
+
+    planner_end = time.perf_counter()
+
+    print(
+        f"[TIME] Dashboard Planner: "
+        f"{planner_end - planner_start:.3f} sec"
+    )
+
+    executor_start = time.perf_counter()
+
+    dashboard = execute_dashboard(
+        plan,
+        [],
+    )
+
+    executor_end = time.perf_counter()
+
+    print(
+        f"[TIME] Dashboard Executor: "
+        f"{executor_end - executor_start:.3f} sec"
+    )
+    print(json.dumps(dashboard, indent=2, default=str))
+    dashboard = clean_json(dashboard)
+    return {
+        
+
+        
+        "cards": dashboard
+    }
 
 # ─── Health ───────────────────────────────────────────────────────────────────
 
