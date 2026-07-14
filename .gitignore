@@ -7,3 +7,6 @@ dist/
 build/
 *.zip
 .env
+backend/catalog.db
+backend/output/
+csvs/*.csv
