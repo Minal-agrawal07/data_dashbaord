@@ -12,3 +12,4 @@ python-multipart
 requests
 numpy
 matplotlib
+openai==1.54.0
