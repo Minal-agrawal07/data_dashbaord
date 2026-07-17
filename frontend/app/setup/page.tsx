@@ -64,12 +64,7 @@ export default function SetupPage() {
             <div className="text-xs text-gray-500 mb-1">CSV Files Loaded</div>
             <div className="text-2xl font-bold text-white">{health.csv_files}</div>
           </div>
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-            <div className="text-xs text-gray-500 mb-1">API Key</div>
-            <div className={`text-sm font-medium ${health.model_path_set ? "text-emerald-400" : "text-red-400"}`}>
-              {health.model_path_set ? "✓ Model path configured" : "✗ Missing — set GEMMA_MODEL_PATH in backend/.env"}
-            </div>
-          </div>
+
         </div>
       )}
 
