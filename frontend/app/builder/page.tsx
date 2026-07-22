@@ -155,7 +155,7 @@ export default function BuilderPage() {
             <SQLPanel sql={res.sql} onRunSQL={handleRunSQL} />
           )}
 
-          {current?.history && current.history.length > 2 && (
+          /* {current?.history && current.history.length > 2 && (
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 space-y-2">
               <div className="text-xs text-gray-500 mb-3 uppercase tracking-wider">Conversation</div>
               {current.history.map((turn, i) => (
@@ -174,7 +174,7 @@ export default function BuilderPage() {
                 </div>
               ))}
             </div>
-          )}
+          )} */
         </div>
       )}
 
