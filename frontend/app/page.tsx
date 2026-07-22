@@ -241,7 +241,7 @@ const handleFile = async (file: File) => {
           />
 
           <h3 className="text-white font-semibold text-lg">
-            Instant Charts
+            Dashboard Generator
           </h3>
 
           <p className="text-gray-400 text-sm mt-2">
