@@ -1,11 +1,17 @@
 import os
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 
-def save_chart_image(chart_config, base_folder="output/"):
+def save_chart_image(
+    chart_config,
+    base_folder=Path(__file__).resolve().parent.parent / "output",
+):
     print("TYPE:", type(chart_config))
     print("CONFIG:", chart_config)
-    os.makedirs(base_folder, exist_ok=True)
+    print("TYPE:", type(chart_config))
+    print("CONFIG:", chart_config)
+    
 
     chart_type = (
     chart_config.get("type")
@@ -49,9 +55,11 @@ def save_chart_image(chart_config, base_folder="output/"):
         print(f"Chart type '{chart_type}' not supported for saving.")
         return
 
-    output_file = os.path.join(base_folder, "chart.png")
+    base_folder.mkdir(parents=True, exist_ok=True)
+
+    output_file = base_folder / "chart.png"
     plt.tight_layout()
     plt.savefig(output_file)
     plt.close()
 
-    print(f"Chart saved as {output_file}")
+    print("Absolute Path:", output_file.resolve())
