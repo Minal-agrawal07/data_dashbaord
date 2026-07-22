@@ -82,13 +82,15 @@ export default function BuilderPage() {
 
   const res = current?.response;
 
-  const downloadChart = () => {
-  const a = document.createElement("a");
-  a.href = "http://localhost:8000/api/charts/download";
-  a.download = "chart.png";
-  a.click();
-};
+const BASE =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
+const downloadChart = () => {
+  window.open(
+    `${BASE}/api/charts/download?t=${Date.now()}`,
+    "_blank"
+  );
+};
   return (
     <div className="max-w-5xl mx-auto px-6 py-8 space-y-6">
       <div className="flex items-center justify-between">
