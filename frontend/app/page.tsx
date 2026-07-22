@@ -210,7 +210,7 @@ const handleFile = async (file: File) => {
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-16">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-16">
         <div
   onClick={() => setShowUpload(true)}
   className="bg-gray-900 border border-gray-800 rounded-xl p-6 cursor-pointer hover:border-indigo-500 transition"
