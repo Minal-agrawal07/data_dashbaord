@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-
+from fastapi.responses import FileResponse
 
 load_dotenv()
 
@@ -43,10 +43,7 @@ app = FastAPI(title="AI Dashboard Builder", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-    "http://localhost:3000",
-    "https://data-dashbaord-frontend.onrender.com"
-],
+    allow_origins=["http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -353,8 +350,17 @@ def generate_chart(body: GenerateRequest):
     # )
     #
     # return {**result, "chart_id": chart_id}
+from pathlib import Path
 
+@app.get("/api/charts/download")
+def download_chart():
+    file_path = Path(__file__).parent / "output" / "chart.png"
 
+    return FileResponse(
+        path=file_path,
+        media_type="image/png",
+        filename="chart.png",
+    )
 @app.post("/api/charts/{chart_id}/refine")
 def refine_chart(chart_id: int, body: RefineRequest):
     result = _run_pipeline(body.nl_query, body.conversation_history)
