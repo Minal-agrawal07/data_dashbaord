@@ -40,10 +40,12 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="AI Dashboard Builder", lifespan=lifespan)
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[
+        "http://localhost:3000",
+        "https://data-dashboard-frontend.onrender.com",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
