@@ -54,12 +54,12 @@ def save_chart_image(
     else:
         print(f"Chart type '{chart_type}' not supported for saving.")
         return
-
     base_folder.mkdir(parents=True, exist_ok=True)
 
     output_file = base_folder / "chart.png"
-    plt.tight_layout()
-    plt.savefig(output_file)
-    plt.close()
 
-    print("Absolute Path:", output_file.resolve())
+    plt.tight_layout()
+    plt.savefig(output_file, dpi=300, bbox_inches="tight")
+    plt.close("all")
+
+    print("Saved:", output_file.resolve())
