@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { MessageSquare, Plus, LayoutDashboard, AlertCircle, RefreshCw } from "lucide-react";
+import { MessageSquare, Plus, LayoutDashboard, AlertCircle, RefreshCw, Download } from "lucide-react";
 import NLInput from "@/components/NLInput";
 import ChartRenderer from "@/components/ChartRenderer";
 import SQLPanel from "@/components/SQLPanel";
@@ -82,6 +82,13 @@ export default function BuilderPage() {
 
   const res = current?.response;
 
+  const downloadChart = () => {
+  const a = document.createElement("a");
+  a.href = "http://localhost:8000/api/charts/download";
+  a.download = "chart.png";
+  a.click();
+};
+
   return (
     <div className="max-w-5xl mx-auto px-6 py-8 space-y-6">
       <div className="flex items-center justify-between">
@@ -140,13 +147,25 @@ export default function BuilderPage() {
               </div>
             </div>
 
-            <div className="p-4">
+            <div className="p-4 space-y-5">
               {res.chart_config && (
+                <>
                 <ChartRenderer
                   chartConfig={res.chart_config}
                   chartType={res.chart_type || "bar"}
                   data={res.data}
                 />
+                <div className="flex justify-end">
+  <button
+  onClick={downloadChart}
+  className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg text-white text-sm transition"
+>
+  <Download size={16} />
+  Download Chart
+</button>
+</div>
+</>
+                
               )}
             </div>
           </div>
@@ -155,7 +174,7 @@ export default function BuilderPage() {
             <SQLPanel sql={res.sql} onRunSQL={handleRunSQL} />
           )}
 
-          /* {current?.history && current.history.length > 2 && (
+          {/* {current?.history && current.history.length > 2 && (
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 space-y-2">
               <div className="text-xs text-gray-500 mb-3 uppercase tracking-wider">Conversation</div>
               {current.history.map((turn, i) => (
@@ -174,7 +193,7 @@ export default function BuilderPage() {
                 </div>
               ))}
             </div>
-          )} */
+          )} */}
         </div>
       )}
 
