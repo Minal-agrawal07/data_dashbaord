@@ -45,7 +45,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         
-        "https://data-dashboard-frontend.onrender.com"
+        "https://data-dashbaord-frontend.onrender.com"
     ],
     allow_credentials=True,
     allow_methods=["*"],
